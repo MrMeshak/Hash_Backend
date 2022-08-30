@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String      @id @default(uuid())
+  email       String      @unique
+  password    String
+  permissions Permissions @default(USER)
+
+  firstname  String
+  lastname   String
+  profileImg String @default("defaultImg")
+
+  createdAt  DateTime @default(now())
+  updtatedAt DateTime @updatedAt
+
+  userPosts    Post[]    @relation("UserCreatedPosts")
+  upVotedPosts Post[]
+  Comments     Comment[]
+  Replies      Reply[]
+
+  @@index([email])
+}
+
+model Post {
+  id          String @id @default(uuid())
+  title       String
+  description String
+  category    String
+  status      Status @default(NONE)
+  upVotes     Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author         User      @relation("UserCreatedPosts", fields: [authorId], references: [id])
+  authorId       String
+  userUpvoteList User[]
+  comments       Comment[]
+}
+
+model Comment {
+  id      String @id @default(uuid())
+  content String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author   User    @relation(fields: [authorId], references: [id])
+  authorId String
+  post     Post    @relation(fields: [postId], references: [id])
+  postId   String
+  replies  Reply[]
+}
+
+model Reply {
+  id      String @id @default(uuid())
+  content String
+
+  comment   Comment @relation(fields: [commentId], references: [id])
+  commentId String
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+
+enum Permissions {
+  USER
+  DEVELOPER
+  ADMIN
+}
+
+enum Status {
+  NONE
+  PLANNED
+  INPROGRESS
+  LIVE
+}
