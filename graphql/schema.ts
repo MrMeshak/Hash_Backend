@@ -7,7 +7,13 @@ import {
   GraphQLList,
 } from "graphql";
 import prisma from "../utils/prismaClient";
-import { removeSensitiveUserData, authCheckUser } from "../utils/graphQlHelper";
+import {
+  removeSensitiveUserData,
+  authCheckUser,
+  authCheckCurrentUser,
+  authCheckCurrentUserOrHasPermissions,
+  authCheckPermissions,
+} from "../utils/graphQlHelper";
 import { User } from "@prisma/client";
 import { userInfo } from "os";
 
@@ -27,6 +33,14 @@ const UserType: GraphQLObjectType = new GraphQLObjectType({
     userPosts: {
       type: new GraphQLList(PostType),
       async resolve(parent, args, context) {
+        authCheckCurrentUserOrHasPermissions(
+          context.isAuth,
+          parent.id,
+          context.userId,
+          context.permissions,
+          "ADMIN",
+          context.error
+        );
         const user = await prisma.user.findUnique({
           where: {
             id: parent.id,
@@ -35,12 +49,23 @@ const UserType: GraphQLObjectType = new GraphQLObjectType({
             userPosts: true,
           },
         });
-        return user?.userPosts;
+        if (!user) {
+          throw Error("User could not be found");
+        }
+        return user.userPosts;
       },
     },
     upVotedPosts: {
       type: new GraphQLList(PostType),
       async resolve(parent, args, context) {
+        authCheckCurrentUserOrHasPermissions(
+          context.isAuth,
+          parent.id,
+          context.userId,
+          context.permissions,
+          "ADMIN",
+          context.error
+        );
         const user = await prisma.user.findUnique({
           where: {
             id: parent.id,
@@ -89,7 +114,14 @@ const PostType: GraphQLObjectType = new GraphQLObjectType({
     },
     userUpVoteList: {
       type: new GraphQLList(UserType),
-      async resolve(parent, args, context) {},
+      async resolve(parent, args, context) {
+        authCheckPermissions(
+          context.isAuth,
+          context.permissions,
+          "ADMIN",
+          context.error
+        );
+      },
     },
     comments: {
       type: new GraphQLList(CommentType),
@@ -166,7 +198,17 @@ const ReplyType: GraphQLObjectType = new GraphQLObjectType({
     },
     author: {
       type: UserType,
-      resolve(parent, args, context) {},
+      async resolve(parent, args, context) {
+        const user = await prisma.user.findUnique({
+          where: {
+            id: parent.authorId,
+          },
+        });
+        if (!user) {
+          throw Error("User could not be found");
+        }
+        return removeSensitiveUserData(user);
+      },
     },
   }),
 });
@@ -186,7 +228,30 @@ const RootQueryType = new GraphQLObjectType({
         if (!user) {
           throw new Error("User could not be found");
         }
-        return removeSensitiveUserData(user);
+        return user;
+      },
+    },
+    user: {
+      type: UserType,
+      args: {
+        userId: { type: GraphQLID },
+      },
+      async resolve(parent, args, context) {
+        authCheckPermissions(
+          context.isAuth,
+          context.permissions,
+          "ADMIN",
+          context.error
+        );
+        const user = await prisma.user.findUnique({
+          where: {
+            id: context.userId,
+          },
+        });
+        if (!user) {
+          throw new Error("User could not be found");
+        }
+        return user;
       },
     },
     post: {
@@ -317,6 +382,7 @@ const MutationType = new GraphQLObjectType({
         content: { type: GraphQLString },
       },
       async resolve(parent, args, context) {
+        authCheckUser(context.isAuth, context.error);
         const reply = await prisma.reply.create({
           data: {
             content: args.content,

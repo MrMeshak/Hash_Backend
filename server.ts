@@ -28,6 +28,7 @@ app.use("/graphql", (req: Request, res: Response) => {
     context: {
       userId: "2caaeda4-75c2-42a2-a9a3-eac938f971f1", //res.locals.userId,
       isAuth: true, //res.locals.isAuth,
+      permissions: "USER", //res.locals.permissions,
       error: "", //res.locals.error,
     },
   })(req, res);
