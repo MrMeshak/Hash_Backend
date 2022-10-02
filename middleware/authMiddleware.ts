@@ -9,17 +9,17 @@ export const authMiddleware = async (
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader) {
+  if (!req.cookies.authToken) {
     res.locals.userId = "";
     res.locals.permissions = "";
     res.locals.isAuth = false;
-    res.locals.error = "Missing authentication header";
+    res.locals.error = "Missing authentication token";
     return next();
   }
 
   let decoded;
   try {
-    const token = authHeader.split(" ")[1];
+    const token = req.cookies.authToken;
     decoded = jwt.verify(token, process.env.SECRET!);
   } catch (error) {
     res.locals.isAuth = false;

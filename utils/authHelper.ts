@@ -33,7 +33,7 @@ export const signupUser = async (
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
 
-  const user = prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       email: email,
       password: hash,
