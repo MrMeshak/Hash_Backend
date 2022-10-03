@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../../utils/prismaClient';
 import { loginUser, signupUser } from '../../utils/authHelper';
 import { createToken } from '../../utils/jwtHelper';
-import { removeSensitiveUserData } from '../../utils/graphQlHelper';
+import { removeSensitiveUserData } from '../../utils/graphqlHelper';
 
 //Signup User
 /*
