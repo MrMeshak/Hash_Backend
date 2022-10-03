@@ -1,11 +1,11 @@
-import express, { Request, Response } from "express";
-import { graphqlHTTP } from "express-graphql";
-import dotenv from "dotenv";
-import cors from "cors";
-import { authMiddleware } from "./middleware/authMiddleware";
-import authRouter from "./restapi/routes/authRoutes";
-import gqlSchema from "./graphql/schema";
-import cookieParser from "cookie-parser";
+import express, { Request, Response } from 'express';
+import { graphqlHTTP } from 'express-graphql';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { authMiddleware } from './middleware/authMiddleware';
+import authRouter from './restapi/routes/authRoutes';
+import gqlSchema from './graphql/schema';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -19,11 +19,11 @@ app.use((req, res, next) => {
 });
 
 //routes
-app.use("/auth", authRouter);
+app.use('/auth', authRouter);
 
 //graphQl
 app.use(authMiddleware);
-app.use("/graphql", (req: Request, res: Response) => {
+app.use('/graphql', (req: Request, res: Response) => {
   graphqlHTTP({
     schema: gqlSchema,
     graphiql: true,
@@ -31,12 +31,12 @@ app.use("/graphql", (req: Request, res: Response) => {
       userId: res.locals.userId, //"2caaeda4-75c2-42a2-a9a3-eac938f971f1",
       isAuth: res.locals.isAuth, //true,
       permissions: res.locals.permissions, //"USER",
-      error: res.locals.error, //"",
-    },
+      error: res.locals.error //"",
+    }
   })(req, res);
 });
 
 //Start Server
-app.listen(process.env.SERVER_PORT!, () => {
+app.listen(parseInt(process.env.SERVER_PORT!), `0.0.0.0:${process.env.SERVER_PORT!}`, () => {
   console.log(`Server is running on port ${process.env.SERVER_PORT}`);
 });
