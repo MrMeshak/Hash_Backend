@@ -1,6 +1,6 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLBoolean, GraphQLInt, GraphQLID, GraphQLList } from 'graphql';
 import prisma from '../utils/prismaClient';
-import { removeSensitiveUserData, authCheckUser, authCheckCurrentUser, authCheckCurrentUserOrHasPermissions, authCheckPermissions, authCheckUserIsAuthor } from '../utils/graphQlHelper';
+import { removeSensitiveUserData, authCheckUser, authCheckCurrentUser, authCheckCurrentUserOrHasPermissions, authCheckPermissions, authCheckUserIsAuthor } from '../utils/graphqlHelper';
 import { User } from '@prisma/client';
 import { userInfo } from 'os';
 import { parentPort } from 'worker_threads';
