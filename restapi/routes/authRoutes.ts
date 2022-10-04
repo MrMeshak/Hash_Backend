@@ -12,4 +12,9 @@ router.post('/signup', authController.signup);
 //Logout Route
 router.get('/logout', authController.logout);
 
+router.get('/alive', (req, res) => {
+  console.log('I am alive');
+  res.status(200).json({ message: 'I am alive' });
+});
+
 export default router;
