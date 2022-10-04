@@ -43,7 +43,6 @@ export const login = async (req: Request, res: Response) => {
     console.log(user);
     const token = createToken(user.id);
     res.cookie('authToken', token, { maxAge: 370000, httpOnly: true, sameSite: 'strict', secure: true, domain: '.up.railway.app' });
-    res.cookie('authToken', token, { maxAge: 370000, httpOnly: true, sameSite: 'strict', secure: true, domain: '.up.railway.app' });
     res.status(200).json({
       user: removeSensitiveUserData(user)
     });
@@ -54,7 +53,6 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  res.cookie('authToken', '', { maxAge: 370000, httpOnly: true, sameSite: 'strict', secure: true, domain: '.up.railway.app' });
   res.cookie('authToken', '', { maxAge: 370000, httpOnly: true, sameSite: 'strict', secure: true, domain: '.up.railway.app' });
   res.status(200).json({ message: 'successfully logged out' });
 };
