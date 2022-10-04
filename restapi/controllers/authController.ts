@@ -18,7 +18,7 @@ export const signup = async (req: Request, res: Response) => {
   try {
     const user = await signupUser(email, password, firstname, lastname);
     const token = createToken(user.id);
-    res.cookie('authToken', token, { maxAge: 370000, httpOnly: true, sameSite: 'lax' });
+    res.cookie('authToken', token, { maxAge: 370000, httpOnly: true, sameSite: 'none', secure: true });
     res.status(200).json({
       user: removeSensitiveUserData(user)
     });
@@ -41,7 +41,7 @@ export const login = async (req: Request, res: Response) => {
     const user = await loginUser(email, password);
     console.log(user);
     const token = createToken(user.id);
-    res.cookie('authToken', token, { maxAge: 370000, httpOnly: true, sameSite: 'lax' });
+    res.cookie('authToken', token, { maxAge: 370000, httpOnly: true, sameSite: 'none', secure: true });
     res.status(200).json({
       user: removeSensitiveUserData(user)
     });
