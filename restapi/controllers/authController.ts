@@ -18,8 +18,7 @@ export const signup = async (req: Request, res: Response) => {
   try {
     const user = await signupUser(email, password, firstname, lastname);
     const token = createToken(user.id);
-    res.cookie('authToken', token, { maxAge: 370000, httpOnly: true, sameSite: 'strict', secure: true, domain: 'hashbackend-production.up.railway.app' });
-    res.cookie('authToken', token, { maxAge: 370000, httpOnly: true, sameSite: 'strict', secure: true, domain: 'hash.up.railway.app' });
+    res.cookie('authToken', token, { maxAge: 370000, httpOnly: true, sameSite: 'strict', secure: true, domain: '.up.railway.app' });
     res.status(200).json({
       user: removeSensitiveUserData(user)
     });
