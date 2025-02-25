@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.ts",
+    "build" : "prisma generate",
     "start": "ts-node server.ts"
   },
   "author": "",
