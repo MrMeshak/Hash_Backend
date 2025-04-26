@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser';
 const app = express();
 
 //middleware
-app.use(cors({ origin: "https://hash.up.app", credentials: true }));
+app.use(cors({ origin: "https://hash.up.railway.app", credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 app.use((req, res, next) => {
